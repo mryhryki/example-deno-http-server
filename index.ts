@@ -2,11 +2,17 @@ import { serve } from "https://deno.land/std@0.116.0/http/server.ts";
 
 const PORT = 8080;
 
-serve((request): Response => {
+serve((request: Request): Response => {
   const url = new URL(request.url);
   const path = url.pathname;
 
-  if (path === "/") {
+  if (request.method === "POST") {
+    return new Response(request.body, {
+      headers: {
+        "Content-Type": request.headers.get("Content-Type") || "application/octet-stream",
+      },
+    });
+  } else if (path === "/") {
     return new Response("<h1>example-deno-http-server</h1>", {
       headers: {
         "Content-Type": "text/html; charset=utf8",

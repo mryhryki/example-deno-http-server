@@ -15,5 +15,5 @@ $ deno run --allow-net ./index.ts
 $ docker build -t example-deno-http-server:latest ./
 
 # Run on local
-$ docker run --rm example-deno-http-server:latest
+$ docker run --rm -p 8080:8080 example-deno-http-server:latest
 ```
