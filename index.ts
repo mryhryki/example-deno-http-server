@@ -1,34 +1,31 @@
-import { serve } from "https://deno.land/std@0.116.0/http/server.ts";
-
 const PORT = 8080;
 
-serve((request: Request): Response => {
-  const url = new URL(request.url);
-  const path = url.pathname;
+const server = Deno.listen({ port: PORT });
+console.log(`http://localhost:${PORT}/`);
+
+const handleHttpRequest = async (request: Request): Promise<Response> => {
+  const { pathname, searchParams } = new URL(request.url);
 
   if (request.method === "POST") {
-    return new Response(request.body, {
-      headers: {
-        "Content-Type": request.headers.get("Content-Type") || "application/octet-stream",
-      },
+    const payload = await request.text();
+    return new Response(JSON.stringify({ pathname, payload }, null, 2), {
+      headers: { "Content-Type": "application/json" },
     });
-  } else if (path === "/") {
-    return new Response("<h1>example-deno-http-server</h1>", {
-      headers: {
-        "Content-Type": "text/html; charset=utf8",
-      },
+  } else if (request.method === "GET") {
+    return new Response(JSON.stringify({ pathname, searchParams }, null, 2), {
+      headers: { "Content-Type": "application/json" },
     });
-  } else if (path.startsWith("/test/")) {
-    return new Response(
-      JSON.stringify({ test: true, param: path.substring(6) }, null, 2),
-      {
-        headers: {
-          "Content-Type": "application/json; charset=utf8",
-        },
-      },
-    );
   }
   return new Response("Not Found", { status: 404 });
-}, { addr: `:${PORT}` });
+};
 
-console.log(`http://localhost:${PORT}/`);
+for await (const conn of server) {
+  (async () => {
+    const httpConn = Deno.serveHttp(conn);
+    for await (const requestEvent of httpConn) {
+      await requestEvent.respondWith(
+        await handleHttpRequest(requestEvent.request),
+      );
+    }
+  })();
+}
