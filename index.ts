@@ -8,11 +8,15 @@ const handleHttpRequest = async (request: Request): Promise<Response> => {
 
   if (request.method === "POST") {
     const payload = await request.text();
-    return new Response(JSON.stringify({ pathname, payload }, null, 2), {
+    const data = JSON.stringify({ pathname, payload }, null, 2);
+    console.log("Request Data:", data);
+    return new Response(data, {
       headers: { "Content-Type": "application/json" },
     });
   } else if (request.method === "GET") {
-    return new Response(JSON.stringify({ pathname, searchParams }, null, 2), {
+    const data = JSON.stringify({ pathname, searchParams }, null, 2);
+    console.log("Request Data:", data);
+    return new Response(data, {
       headers: { "Content-Type": "application/json" },
     });
   }
