@@ -2,12 +2,7 @@ import { serve } from "https://deno.land/std@0.114.0/http/server.ts";
 
 const PORT = 8080;
 
-/**
- * HTTPリクエストのハンドラ
- *
- * @param request HTTPリクエスト
- */
-const handleHttpRequest = async (request: Request): Promise<Response> => {
+const handler = async (request: Request): Promise<Response> => {
   console.log("Request:", request.method, request.url);
   const { pathname, search } = new URL(request.url);
 
@@ -31,4 +26,4 @@ const handleHttpRequest = async (request: Request): Promise<Response> => {
 };
 
 console.log(`Listening on http://localhost:${PORT}/`);
-await serve(handleHttpRequest, { addr: `:${PORT}` });
+await serve(handler, { addr: `:${PORT}` });
