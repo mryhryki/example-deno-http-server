@@ -1,4 +1,4 @@
-FROM denoland/deno:1.16.3
+FROM denoland/deno:1.17.1
 COPY ./index.ts ./index.ts
 
 EXPOSE 8080
