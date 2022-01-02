@@ -1,12 +1,19 @@
+// HTTP Server を起動
 const PORT = 8080;
-
 const server = Deno.listen({ port: PORT });
-console.log(`http://localhost:${PORT}/`);
+console.log(`Port: ${PORT}`);
 
+/**
+ * HTTPリクエストのハンドラ
+ *
+ * @param request HTTPリクエスト
+ */
 const handleHttpRequest = async (request: Request): Promise<Response> => {
-  const { pathname, searchParams } = new URL(request.url);
+  console.log("Request:", request.method, request.url);
+  const { pathname, search } = new URL(request.url);
 
   if (request.method === "POST") {
+    // POST リクエストの場合は、リクエストボディを返す
     const payload = await request.text();
     const data = JSON.stringify({ pathname, payload }, null, 2);
     console.log("Request Data:", data);
@@ -14,7 +21,8 @@ const handleHttpRequest = async (request: Request): Promise<Response> => {
       headers: { "Content-Type": "application/json" },
     });
   } else if (request.method === "GET") {
-    const data = JSON.stringify({ pathname, searchParams }, null, 2);
+    // GET リクエストの場合は、クエリパラメータを返す
+    const data = JSON.stringify({ pathname, search }, null, 2);
     console.log("Request Data:", data);
     return new Response(data, {
       headers: { "Content-Type": "application/json" },
@@ -23,6 +31,7 @@ const handleHttpRequest = async (request: Request): Promise<Response> => {
   return new Response("Not Found", { status: 404 });
 };
 
+// リクエストを待機
 for await (const conn of server) {
   (async () => {
     const httpConn = Deno.serveHttp(conn);
