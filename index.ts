@@ -3,7 +3,7 @@ import { serve } from "https://deno.land/std@0.114.0/http/server.ts";
 const PORT = 8080;
 
 const handler = async (request: Request): Promise<Response> => {
-  console.log("Request:", request.method, request.url);
+  console.log("[TEST] Request:", request.method, request.url);
   const { pathname, search } = new URL(request.url);
 
   if (request.method === "GET") {
